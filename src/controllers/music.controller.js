@@ -45,4 +45,48 @@ async function createAlbum(req, res) {
   });
 }
 
-module.exports = { createMusic, createAlbum };
+async function getAllMusics(req, res) {
+  const musics = await musicModel
+    .find()
+    .limit(2)
+    .populate("artist", "username email");
+
+  res.status(200).json({
+    message: "Music fetched sucessfully",
+    musics: musics,
+  });
+}
+
+async function getAllAlbums(req, res) {
+  const albums = await albumModel
+    .find()
+    .select("title artist")
+    .populate("artist", "username email");
+
+  res.status(200).json({
+    message: " Album successfully fetched",
+    albums: albums,
+  });
+}
+
+async function getAlbumsById(req, res) {
+  const albumId = req.params.albumId;
+
+  const album = await albumModel
+    .findById(albumId)
+    .populate("artist", "usename email")
+    .populate("musics");
+
+  res.status(200).json({
+    message: "Album fetched succesfully",
+    album: album,
+  });
+}
+
+module.exports = {
+  createMusic,
+  createAlbum,
+  getAllMusics,
+  getAllAlbums,
+  getAlbumsById,
+};
